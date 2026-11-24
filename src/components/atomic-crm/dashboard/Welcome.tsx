@@ -13,12 +13,13 @@ export const Welcome = () => (
         >
           Atomic CRM
         </a>{" "}
-        es una plantilla de código abierto para armar tu propio CRM, adaptada acá para desarrolladoras e inmobiliarias.
+        es una plantilla de código abierto para armar tu propio CRM, adaptada
+        acá para desarrolladoras e inmobiliarias.
       </p>
       <p className="text-sm mb-4">
         Esta demo funciona con datos de prueba en tu navegador: podés cargar y
-        modificar lo que quieras, y todo vuelve a cero al recargar la página.
-        La versión completa guarda los datos en Supabase.
+        modificar lo que quieras, y todo vuelve a cero al recargar la página. La
+        versión completa guarda los datos en Supabase.
       </p>
       <p className="text-sm">
         Construido con{" "}

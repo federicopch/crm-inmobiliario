@@ -49,8 +49,7 @@ export const spanishCrmMessages = {
       followed_by_you: "Seguida por vos",
       no_contacts: "Sin contactos",
       nb_contacts: "%{smart_count} contacto |||| %{smart_count} contactos",
-      nb_deals:
-        "%{smart_count} oportunidad |||| %{smart_count} oportunidades",
+      nb_deals: "%{smart_count} oportunidad |||| %{smart_count} oportunidades",
       sizes: {
         one_employee: "1 empleado",
         two_to_nine_employees: "2-9 empleados",
@@ -345,7 +344,8 @@ export const spanishCrmMessages = {
         edit_for: "Editar tarea de %{name}",
       },
       empty: "Todavía no hay tareas",
-      empty_list_hint: "Las tareas que agregues a tus contactos van a aparecer acá.",
+      empty_list_hint:
+        "Las tareas que agregues a tus contactos van a aparecer acá.",
       filters: {
         later: "Más adelante",
         overdue: "Vencidas",
@@ -459,7 +459,8 @@ export const spanishCrmMessages = {
       remaining_time: "Tiempo restante estimado:",
       resource: "Recurso",
       sample_download: "Descargar CSV de ejemplo",
-      sample_hint: "Acá tenés un archivo CSV de ejemplo para usar como plantilla",
+      sample_hint:
+        "Acá tenés un archivo CSV de ejemplo para usar como plantilla",
       start: "Iniciar importación",
       stop: "Detener importación",
       stopped:
@@ -471,11 +472,13 @@ export const spanishCrmMessages = {
     },
     search: {
       title: "Buscar",
-      placeholder: "Buscá contactos, empresas, oportunidades, tareas y notas...",
+      placeholder:
+        "Buscá contactos, empresas, oportunidades, tareas y notas...",
       hint: "Escribí al menos %{min} caracteres para buscar",
       recent_contacts: "Vistos recientemente",
       empty: "No se encontraron resultados",
-      error: "La búsqueda no está disponible en este momento. Intentá de nuevo.",
+      error:
+        "La búsqueda no está disponible en este momento. Intentá de nuevo.",
       untitled_result: "(sin título)",
       show_more: "Mostrar más",
       groups: {

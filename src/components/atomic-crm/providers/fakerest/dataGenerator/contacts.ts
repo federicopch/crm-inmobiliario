@@ -1,74 +1,59 @@
-import {
-  company as fakerCompany,
-  internet,
-  lorem,
-  name,
-  phone,
-  random,
-} from "faker/locale/en_US";
+import { random } from "faker/locale/en_US";
 
 import { defaultNoteStatuses } from "../../../root/defaultConfiguration";
-import { contactGender } from "../../../contacts/contactModel";
 import type { Company, Contact } from "../../../types";
 import type { Db } from "./types";
 import { randomDate, weightedBoolean } from "./utils";
+import {
+  backgroundsBySector,
+  pickGenderedName,
+  phoneFor,
+  places,
+  slug,
+  titlesBySector,
+} from "./realEstateData";
 
 const maxContacts = {
-  1: 1,
-  10: 4,
-  50: 12,
-  250: 25,
-  500: 50,
+  1: 3,
+  10: 6,
+  50: 10,
+  250: 12,
+  500: 12,
 };
 
 const getRandomContactDetailsType = () =>
   random.arrayElement(["Work", "Home", "Other"]) as "Work" | "Home" | "Other";
 
-export const generateContacts = (db: Db, size = 500): Required<Contact>[] => {
-  const nbAvailblePictures = 223;
-  let numberOfContacts = 0;
-
+export const generateContacts = (db: Db, size = 200): Required<Contact>[] => {
   return Array.from(Array(size).keys()).map((id) => {
-    const has_avatar =
-      weightedBoolean(25) && numberOfContacts < nbAvailblePictures;
-    const gender = random.arrayElement(contactGender).value;
-    const first_name = name.firstName(gender as any);
-    const last_name = name.lastName();
-    const email_jsonb = [
-      {
-        email: internet.email(first_name, last_name),
-        type: getRandomContactDetailsType(),
-      },
-    ];
-    const phone_jsonb = [
-      {
-        number: phone.phoneNumber(),
-        type: getRandomContactDetailsType(),
-      },
-      {
-        number: phone.phoneNumber(),
-        type: getRandomContactDetailsType(),
-      },
-    ];
-    const avatar = {
-      src: has_avatar
-        ? "https://marmelab.com/posters/avatar-" +
-          (223 - numberOfContacts) +
-          ".jpeg"
-        : undefined,
-    };
-    const title = fakerCompany.bsAdjective();
-
-    if (has_avatar) {
-      numberOfContacts++;
-    }
-
-    // choose company with people left to know
+    // elegir una empresa que todavía tenga lugar para contactos
     let company: Company;
     do {
       company = random.arrayElement(db.companies);
     } while ((company.nb_contacts ?? 0) >= maxContacts[company.size]);
     company.nb_contacts = (company.nb_contacts ?? 0) + 1;
+
+    const { gender, female, first_name, last_name } = pickGenderedName();
+    const domain = company.website.replace(/^https:\/\/www\./, "");
+    const email_jsonb = [
+      {
+        email: `${slug(first_name)}.${slug(last_name)}@${domain}`,
+        type: "Work" as const,
+      },
+    ];
+    const place =
+      places.find((p) => p.city === company.city) ??
+      random.arrayElement(places);
+    const phone_jsonb = [
+      { number: phoneFor(place), type: "Work" as const },
+      ...(weightedBoolean(40)
+        ? [{ number: phoneFor(place), type: getRandomContactDetailsType() }]
+        : []),
+    ];
+    // sin fotos: se muestran las iniciales
+    const avatar = { src: undefined };
+    const titles = titlesBySector[company.sector] ?? titlesBySector.otro;
+    const title = random.arrayElement(titles)[female ? 1 : 0];
 
     const first_seen = randomDate(new Date(company.created_at)).toISOString();
     const last_seen = first_seen;
@@ -78,12 +63,14 @@ export const generateContacts = (db: Db, size = 500): Required<Contact>[] => {
       first_name,
       last_name,
       gender,
-      title: title.charAt(0).toUpperCase() + title.substr(1),
+      title,
       company_id: company.id,
       company_name: company.name,
       email_jsonb,
       phone_jsonb,
-      background: lorem.sentence(),
+      background: random.arrayElement(
+        backgroundsBySector[company.sector] ?? backgroundsBySector.otro,
+      ),
       acquisition: random.arrayElement(["inbound", "outbound"]),
       avatar,
       first_seen: first_seen,

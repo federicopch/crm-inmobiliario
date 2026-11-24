@@ -1,8 +1,11 @@
 import faker from "faker/locale/en";
 
-export const weightedArrayElement = (values: any[], weights: any) =>
+export const weightedArrayElement = <T = any>(
+  values: T[],
+  weights: number[],
+): T =>
   faker.random.arrayElement(
-    values.reduce(
+    values.reduce<T[]>(
       (acc, value, index) => acc.concat(new Array(weights[index]).fill(value)),
       [],
     ),

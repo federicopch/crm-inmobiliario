@@ -1,13 +1,10 @@
-import { internet, name } from "faker/locale/en_US";
-
 import type { RAFile, Sale } from "../../../types";
 import type { Db } from "./types";
+import { salesSeeds, slug } from "./realEstateData";
 
 export const generateSales = (_: Db): Sale[] => {
-  const randomSales = Array.from(Array(5).keys()).map((id) => {
-    const first_name = name.firstName();
-    const last_name = name.lastName();
-    const email = internet.email(first_name, last_name);
+  const randomSales = salesSeeds.map(({ first_name, last_name }, id) => {
+    const email = `${slug(first_name)}.${slug(last_name)}@ejemplo.com`;
 
     return {
       id: id + 1,
@@ -25,9 +22,9 @@ export const generateSales = (_: Db): Sale[] => {
     {
       id: 0,
       user_id: "0",
-      first_name: "Jane",
-      last_name: "Doe",
-      email: "janedoe@atomic.dev",
+      first_name: "Lucía",
+      last_name: "Fernández",
+      email: "lucia.fernandez@ejemplo.com",
       secondary_emails: [],
       password: "demo",
       administrator: true,

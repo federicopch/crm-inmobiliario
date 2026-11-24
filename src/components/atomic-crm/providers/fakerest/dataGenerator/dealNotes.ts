@@ -1,15 +1,16 @@
-import { datatype, lorem, random } from "faker/locale/en_US";
+import { random } from "faker/locale/en_US";
 
 import type { Db } from "./types";
 import { randomDate } from "./utils";
+import { dealNoteTexts } from "./realEstateData";
 
 export const generateDealNotes = (db: Db) => {
-  return Array.from(Array(300).keys()).map((id) => {
+  return Array.from(Array(150).keys()).map((id) => {
     const deal = random.arrayElement(db.deals);
     return {
       id,
       deal_id: deal.id,
-      text: lorem.paragraphs(datatype.number({ min: 1, max: 4 })),
+      text: random.arrayElement(dealNoteTexts),
       date: randomDate(
         new Date(db.deals[deal.id as number].created_at),
       ).toISOString(),

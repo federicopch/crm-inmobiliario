@@ -6,9 +6,9 @@ import { dataProvider } from "./dataProvider";
 
 export const DEFAULT_USER = {
   id: 0,
-  first_name: "Jane",
-  last_name: "Doe",
-  email: "janedoe@atomic.dev",
+  first_name: "Lucía",
+  last_name: "Fernández",
+  email: "lucia.fernandez@ejemplo.com",
   password: "demo",
   administrator: true,
   avatar: {
@@ -77,7 +77,9 @@ export const authProvider: AuthProvider = {
     const user = userItem ? (JSON.parse(userItem) as Sale) : null;
     return Promise.resolve({
       id: user?.id ?? 0,
-      fullName: user ? `${user.first_name} ${user.last_name}` : "Jane Doe",
+      fullName: user
+        ? `${user.first_name} ${user.last_name}`
+        : "Lucía Fernández",
       avatar: user?.avatar?.src,
     });
   },

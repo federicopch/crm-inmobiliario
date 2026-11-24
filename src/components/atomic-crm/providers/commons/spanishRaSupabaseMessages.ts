@@ -13,7 +13,8 @@ export const raSupabaseSpanishMessages = {
     },
     reset_password: {
       forgot_password: "¿Olvidaste tu contraseña?",
-      forgot_password_details: "Ingresá tu email para recibir las instrucciones.",
+      forgot_password_details:
+        "Ingresá tu email para recibir las instrucciones.",
     },
     set_password: {
       new_password: "Elegí tu contraseña",

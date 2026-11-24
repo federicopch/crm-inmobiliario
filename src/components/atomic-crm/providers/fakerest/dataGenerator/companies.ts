@@ -1,52 +1,42 @@
-import {
-  address,
-  company,
-  datatype,
-  internet,
-  lorem,
-  phone,
-  random,
-} from "faker/locale/en_US";
+import { datatype, random } from "faker/locale/en_US";
 
 import { randomDate } from "./utils";
-import { defaultCompanySectors } from "../../../root/defaultConfiguration";
 import type { Company, RAFile } from "../../../types";
 import type { Db } from "./types";
+import {
+  address,
+  companySeeds,
+  phoneFor,
+  places,
+  slug,
+} from "./realEstateData";
 
-const sizes = [1, 10, 50, 250, 500];
-
-const regex = /\W+/;
-
-export const generateCompanies = (db: Db, size = 55): Required<Company>[] => {
-  return Array.from(Array(size).keys()).map((id) => {
-    const name = company.companyName();
+export const generateCompanies = (db: Db): Required<Company>[] => {
+  return companySeeds.map((seed, id) => {
+    const place = random.arrayElement(places);
+    const domain = `${slug(seed.name)}.com.ar`;
     return {
       id,
-      name: name,
-      logo: {
-        title: lorem.text(1),
-        src: `https://marmelab.com/react-admin-crm/logos/${id}.png`,
-      } as RAFile,
-      sector: random.arrayElement(defaultCompanySectors).value,
-      size: random.arrayElement(sizes) as 1 | 10 | 50 | 250 | 500,
-      linkedin_url: `https://www.linkedin.com/company/${name
-        .toLowerCase()
-        .replace(regex, "_")}`,
-      website: internet.url(),
-      phone_number: phone.phoneNumber(),
-      address: address.streetAddress(),
-      zipcode: address.zipCode(),
-      city: address.city(),
-      state_abbr: address.stateAbbr(),
+      name: seed.name,
+      logo: { title: seed.name, src: "" } as RAFile,
+      sector: seed.sector,
+      size: seed.size,
+      linkedin_url: `https://www.linkedin.com/company/${slug(seed.name)}`,
+      website: `https://www.${domain}`,
+      phone_number: phoneFor(place),
+      address: address(),
+      zipcode: String(datatype.number({ min: 1000, max: 9400 })),
+      city: place.city,
+      state_abbr: place.province,
       nb_contacts: 0,
       nb_deals: 0,
-      // at least 1/3rd of companies for Jane Doe
+      // al menos un tercio de las empresas para el usuario de la demo
       sales_id: datatype.number(2) === 0 ? 0 : random.arrayElement(db.sales).id,
       created_at: randomDate().toISOString(),
-      description: lorem.paragraph(),
-      revenue: random.arrayElement(["$1M", "$10M", "$100M", "$1B"]),
-      tax_identifier: random.alphaNumeric(10),
-      country: random.arrayElement(["USA", "France", "UK"]),
+      description: seed.description,
+      revenue: random.arrayElement(["$1M", "$10M", "$100M"]),
+      tax_identifier: `30-${datatype.number({ min: 50000000, max: 71999999 })}-${datatype.number(9)}`,
+      country: "Argentina",
       context_links: [],
     };
   });

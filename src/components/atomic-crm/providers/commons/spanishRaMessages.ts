@@ -91,14 +91,16 @@ export const spanishRaMessages: TranslationMessages = {
     },
     message: {
       about: "Acerca de",
-      access_denied: "No tenés los permisos necesarios para acceder a esta página",
+      access_denied:
+        "No tenés los permisos necesarios para acceder a esta página",
       are_you_sure: "¿Estás seguro?",
       authentication_error:
         "El servidor de autenticación devolvió un error y no se pudieron verificar tus credenciales.",
       auth_error: "Ocurrió un error al validar el token de autenticación.",
       bulk_delete_content:
         "¿Estás seguro de que querés eliminar este %{name}? |||| ¿Estás seguro de que querés eliminar estos %{smart_count} elementos?",
-      bulk_delete_title: "Eliminar %{name} |||| Eliminar %{smart_count} %{name}",
+      bulk_delete_title:
+        "Eliminar %{name} |||| Eliminar %{smart_count} %{name}",
       bulk_update_content:
         "¿Estás seguro de que querés actualizar %{name} %{recordRepresentation}? |||| ¿Estás seguro de que querés actualizar estos %{smart_count} elementos?",
       bulk_update_title:
@@ -107,7 +109,8 @@ export const spanishRaMessages: TranslationMessages = {
       delete_content: "¿Estás seguro de que querés eliminar este %{name}?",
       delete_title: "Eliminar %{name} %{recordRepresentation}",
       details: "Detalles",
-      error: "Ocurrió un error del cliente y no se pudo completar tu solicitud.",
+      error:
+        "Ocurrió un error del cliente y no se pudo completar tu solicitud.",
       invalid_form: "El formulario no es válido. Revisá los errores",
       loading: "Esperá, por favor",
       no: "No",
@@ -122,7 +125,8 @@ export const spanishRaMessages: TranslationMessages = {
     },
     navigation: {
       clear_filters: "Limpiar filtros",
-      no_filtered_results: "No se encontraron %{name} con los filtros actuales.",
+      no_filtered_results:
+        "No se encontraron %{name} con los filtros actuales.",
       no_results: "No se encontraron %{name}",
       no_more_results:
         "La página número %{page} está fuera de rango. Probá con la página anterior.",
@@ -157,7 +161,8 @@ export const spanishRaMessages: TranslationMessages = {
       logout: "Cerrar sesión",
     },
     notification: {
-      updated: "Elemento actualizado |||| %{smart_count} elementos actualizados",
+      updated:
+        "Elemento actualizado |||| %{smart_count} elementos actualizados",
       created: "Elemento creado",
       deleted: "Elemento eliminado |||| %{smart_count} elementos eliminados",
       bad_item: "Elemento incorrecto",
@@ -207,7 +212,8 @@ export const spanishRaMessages: TranslationMessages = {
       configureMode: "Configurar esta página",
       inspector: {
         title: "Inspector",
-        content: "Pasá el cursor sobre los elementos de la interfaz para configurarlos",
+        content:
+          "Pasá el cursor sobre los elementos de la interfaz para configurarlos",
         reset: "Restablecer configuración",
         hideAll: "Ocultar todo",
         showAll: "Mostrar todo",
