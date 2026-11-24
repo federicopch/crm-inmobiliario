@@ -1,19 +1,30 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { format, startOfMonth } from "date-fns";
+import { enUS, es, fr } from "date-fns/locale";
 import { TrendingUp } from "lucide-react";
-import { useGetList, useTranslate } from "ra-core";
+import { useGetList, useLocaleState, useTranslate } from "ra-core";
 import { memo, useMemo } from "react";
 
 import { findDealLabel } from "../deals/dealUtils";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 
-const multiplier = {
+// Probabilidad de cierre por etapa, para las oportunidades abiertas.
+// Incluye las etapas originales (en inglés) y las del embudo inmobiliario.
+const multiplier: Record<string, number> = {
   opportunity: 0.2,
   "proposal-sent": 0.5,
   "in-negociation": 0.8,
   delayed: 0.3,
+  consulta: 0.1,
+  visita: 0.3,
+  propuesta: 0.5,
+  reserva: 0.8,
 };
+const DEFAULT_MULTIPLIER = 0.5;
+
+// Etapas que cuentan como perdidas, además de "lost".
+const LOST_STAGES = ["lost", "perdida"];
 
 const threeMonthsAgo = new Date(
   new Date().setMonth(new Date().getMonth() - 6),
@@ -21,17 +32,30 @@ const threeMonthsAgo = new Date(
 
 const DEFAULT_LOCALE = "en-US";
 
+const getDateFnsLocale = (locale: string) =>
+  locale.startsWith("fr") ? fr : locale.startsWith("es") ? es : enUS;
+
 export const DealsChart = memo(() => {
   const translate = useTranslate();
-  const { dealStages, currency } = useConfigurationContext();
+  const [locale = "en"] = useLocaleState();
+  const { dealStages, dealPipelineStatuses, currency } =
+    useConfigurationContext();
   const acceptedLanguages = navigator
     ? navigator.languages || [navigator.language]
     : [DEFAULT_LOCALE];
-  const wonLabel = findDealLabel(dealStages, "won") ?? "Won";
-  const lostLabel = findDealLabel(dealStages, "lost") ?? "Lost";
+  // Las etapas "ganadas" son las que la configuración marca como cierre del embudo.
+  const wonStages = useMemo(
+    () => (dealPipelineStatuses?.length ? dealPipelineStatuses : ["won"]),
+    [dealPipelineStatuses],
+  );
+  const lostStage =
+    dealStages.find((stage) => LOST_STAGES.includes(stage.value))?.value ??
+    "lost";
+  const wonLabel = findDealLabel(dealStages, wonStages[0]) ?? "Won";
+  const lostLabel = findDealLabel(dealStages, lostStage) ?? "Lost";
 
   const { data, isPending } = useGetList<Deal>("deals", {
-    pagination: { perPage: 100, page: 1 },
+    pagination: { perPage: 1000, page: 1 },
     sort: {
       field: "created_at",
       order: "ASC",
@@ -53,31 +77,36 @@ export const DealsChart = memo(() => {
 
     const amountByMonth = Object.keys(dealsByMonth).map((month) => {
       return {
-        date: format(month, "MMM"),
+        date: format(month, "MMM", { locale: getDateFnsLocale(locale) }),
         won: dealsByMonth[month]
-          .filter((deal: Deal) => deal.stage === "won")
+          .filter((deal: Deal) => wonStages.includes(deal.stage))
           .reduce((acc: number, deal: Deal) => {
-            acc += deal.amount;
+            acc += deal.amount ?? 0;
             return acc;
           }, 0),
         pending: dealsByMonth[month]
-          .filter((deal: Deal) => !["won", "lost"].includes(deal.stage))
+          .filter(
+            (deal: Deal) =>
+              !wonStages.includes(deal.stage) &&
+              !LOST_STAGES.includes(deal.stage),
+          )
           .reduce((acc: number, deal: Deal) => {
-            // @ts-expect-error - multiplier type issue
-            acc += deal.amount * multiplier[deal.stage];
+            acc +=
+              (deal.amount ?? 0) *
+              (multiplier[deal.stage] ?? DEFAULT_MULTIPLIER);
             return acc;
           }, 0),
         lost: dealsByMonth[month]
-          .filter((deal: Deal) => deal.stage === "lost")
+          .filter((deal: Deal) => LOST_STAGES.includes(deal.stage))
           .reduce((acc: number, deal: Deal) => {
-            acc -= deal.amount;
+            acc -= deal.amount ?? 0;
             return acc;
           }, 0),
       };
     });
 
     return amountByMonth;
-  }, [data]);
+  }, [data, locale, wonStages]);
 
   if (isPending) return null; // FIXME return skeleton instead
   const range = months.reduce(
